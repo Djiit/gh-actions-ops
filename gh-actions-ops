@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -e
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+    -wc | --worklow-cleanup)
+        workflow_id="$2"
+        shift
+        ;;
+    -h | --help)
+        echo "Help.
+    Use -wc / --workflow-cleanup to pass a GA Workflow ID"
+        exit 0
+        ;;
+    esac
+    shift
+done
+
+if [ -z "$workflow_id" ]; then
+    echo "No workflow found."
+else
+    OWNER="$(gh repo view --json owner,name -q '.owner.login')"
+    REPO="$(gh repo view --json owner,name -q '.name')"
+    gh run list -w "$workflow_id" --limit 1000 --json databaseId -q '.[].databaseId' | xargs -I{} gh api -X DELETE /repos/$OWNER/$REPO/actions/runs/{}
+fi
