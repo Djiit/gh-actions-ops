@@ -21,5 +21,5 @@ if [ -z "$workflow_id" ]; then
 else
     OWNER="$(gh repo view --json owner,name -q '.owner.login')"
     REPO="$(gh repo view --json owner,name -q '.name')"
-    gh run list -w "$workflow_id" --limit 1000 --json databaseId -q '.[].databaseId' | xargs -I{} gh api -X DELETE /repos/$OWNER/$REPO/actions/runs/{}
+    gh run list -w "$workflow_id" --limit 1000 --json databaseId -q '.[].databaseId' | xargs -I{} gh api -X DELETE /repos/$OWNER/$REPO/actions/runs/{} --silent
 fi
